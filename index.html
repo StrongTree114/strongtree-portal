@@ -3,225 +3,461 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StrongTree | 个人数字空间</title>
+    <title>StrongTree 的小站</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+
         body {
-            background-color: #f7f9fc; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            color: #1f2937;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px 0;
+            background: #ffffff;
+            color: #1f2937;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
 
-        .container {
-            background-color: #ffffff;
-            width: 90%;
-            max-width: 420px;
-            padding: 48px 40px;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
-            text-align: center;
-            border: 1px solid rgba(0,0,0,0.02);
-            position: relative;
-            z-index: 1;
+        .layout { min-height: 100vh; display: flex; }
+
+        .sidebar {
+            width: 240px;
+            flex: 0 0 240px;
+            position: sticky;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: 32px 20px;
+            border-right: 1px solid #e5e7eb;
+            background: #ffffff;
         }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0 8px 40px;
+            color: #111827;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .sidebar-header { display: flex; align-items: center; justify-content: space-between; }
+        .menu-toggle {
+            display: none;
+            width: 40px;
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #374151;
+            cursor: pointer;
+        }
+
+        .menu-icon, .menu-icon::before, .menu-icon::after {
+            display: block;
+            width: 18px;
+            height: 2px;
+            border-radius: 2px;
+            background: currentColor;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .menu-icon { position: relative; }
+        .menu-icon::before, .menu-icon::after { position: absolute; left: 0; content: ""; }
+        .menu-icon::before { transform: translateY(-6px); }
+        .menu-icon::after { transform: translateY(6px); }
+        .menu-toggle[aria-expanded="true"] .menu-icon { background: transparent; }
+        .menu-toggle[aria-expanded="true"] .menu-icon::before { transform: rotate(45deg); }
+        .menu-toggle[aria-expanded="true"] .menu-icon::after { transform: rotate(-45deg); }
 
         .logo {
-            width: 64px;
-            height: 64px;
-            background: #eef2f6;
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-items: center;
+            flex: 0 0 40px;
             border-radius: 50%;
-            margin: 0 auto 20px;
+            background: #eef2f6;
+            color: #12d36c;
+            font-size: 20px;
+        }
+
+        .nav-label {
+            margin: 0 12px 10px;
+            color: #9ca3af;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .nav-link {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            font-weight: bold;
-            color: #3b82f6;
+            min-height: 40px;
+            margin-bottom: 4px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: #4b5563;
+            font-size: 14px;
+            text-decoration: none;
         }
 
-        h1 { font-size: 26px; font-weight: 700; margin-bottom: 12px; }
+        .nav-link:hover, .nav-link.active {
+            background: #f3f4f6;
+            color: #111827;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+        }
+
+        .menu-backdrop { display: none; }
+
+        main {
+            width: min(100%, 960px);
+            min-width: 0;
+            flex: 1;
+            padding: 72px 56px;
+        }
+
+        .video-frame {
+            width: min(100%, 900px);
+            aspect-ratio: 16 / 9;
+            margin: 0 0 28px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background: #f3f4f6;
+        }
+
+        .video-frame iframe {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .page { width: min(100%, 680px); }
+        .page[hidden] { display: none; }
+        .page.active { animation: page-enter 0.28s ease both; }
+
+        @keyframes page-enter {
+            from { opacity: 0; transform: translateX(16px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        h1 { margin-bottom: 12px; font-size: 28px; font-weight: 700; }
 
         .description {
-            font-size: 14px;
-            color: #6b7280;
-            line-height: 1.6;
             margin-bottom: 32px;
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.7;
         }
+
+        .links { width: 100%; max-width: 420px; }
+        .page-copy { max-width: 560px; margin-bottom: 28px; color: #6b7280; font-size: 14px; line-height: 1.7; }
+        .sidebar-about { margin-top: auto; }
+
+        .blog-categories { display: grid; width: min(100%, 680px); gap: 20px; }
+        .blog-card {
+            display: block;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #1f2937;
+            text-decoration: none;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .blog-card:hover {
+            transform: translateY(-2px);
+            border-color: #cbd5e1;
+            box-shadow: 0 10px 24px rgba(17, 24, 39, 0.08);
+        }
+        .blog-card:focus-visible { outline: 3px solid #93c5fd; outline-offset: 3px; }
+        .blog-card-image {
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            min-height: 220px;
+            padding: 24px;
+            background: #e9eef0;
+        }
+        .blog-card-minecraft .blog-card-image { background: #e9eee7; }
+        .blog-card-title { color: #111827; font-size: 36px; font-weight: 700; }
+        .blog-card-description { position: absolute; right: 24px; bottom: 20px; left: 24px; color: #4b5563; font-size: 14px; line-height: 1.6; }
 
         .btn {
             display: flex;
             align-items: center;
             justify-content: center;
             width: 100%;
-            padding: 16px;
+            min-height: 52px;
             margin-bottom: 12px;
+            padding: 16px;
+            border: 1px solid #e5e7eb;
             border-radius: 12px;
+            background: #ffffff;
+            color: #374151;
             font-size: 15px;
             font-weight: 600;
-            cursor: pointer;
             text-decoration: none;
+            cursor: pointer;
             transition: all 0.2s ease;
-            border: 1px solid #e5e7eb;
-            background-color: #ffffff;
-            color: #374151;
         }
 
-        /* 博客主按钮 */
         .btn-blog {
-            background-color: #111827;
+            border-color: #111827;
+            background: #111827;
             color: #ffffff;
-            border: none;
         }
+
         .btn-blog:hover {
-            background-color: #374151;
+            border-color: #374151;
+            background: #374151;
             transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
         }
 
-        /* 次级按钮通用悬浮效果 */
-        .btn-sftp:hover, .btn-mc:hover, .btn-bilibili:hover, .btn-mcw:hover {
-            background-color: #f3f4f6;
+        .btn-sftp:hover, .btn-bilibili:hover, .btn-mcw:hover {
             border-color: #d1d5db;
+            background: #f3f4f6;
             transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
         }
 
-        /* B 站专属悬浮特效 */
-        .btn-bilibili:hover {
-            color: #FB7299; 
-            border-color: #FB7299;
-            background-color: #fff0f6;
-        }
+        .btn-bilibili:hover { border-color: #fb7299; background: #fff0f6; color: #fb7299; }
+        .btn-mcw:hover { border-color: #10b981; background: #ecfdf5; color: #10b981; }
 
-        /* MCW 专属悬浮特效 */
-        .btn-mcw:hover {
-            color: #10b981; 
-            border-color: #10b981;
-            background-color: #ecfdf5;
-        }
-
-        /* ====== 底部免责声明样式 ====== */
         .footer-note {
+            max-width: 420px;
             margin-top: 32px;
             padding-top: 20px;
-            border-top: 1px solid #f3f4f6; /* 极浅的上边框 */
-            font-size: 12px;
+            border-top: 1px solid #f3f4f6;
             color: #9ca3af;
+            font-size: 12px;
             line-height: 1.6;
         }
 
-        /* ====== 弹窗样式 (Modal) ====== */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(4px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 100;
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
         }
 
-        .modal-overlay.active { opacity: 1; visibility: visible; }
-
-        .modal-content {
-            background: #ffffff;
-            padding: 32px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 340px;
-            text-align: center;
-            transform: translateY(20px);
-            transition: all 0.3s ease;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        @media (max-width: 640px) {
+            .layout { display: block; }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                padding: 12px 20px;
+                border-right: 0;
+                border-bottom: 1px solid #e5e7eb;
+            }
+            .sidebar-header { min-height: 40px; }
+            .brand { margin: 0; }
+            .menu-toggle { display: flex; }
+            .sidebar { z-index: 50; }
+            .sidebar-menu {
+                position: fixed;
+                top: 65px;
+                bottom: 0;
+                left: 0;
+                z-index: 45;
+                display: flex;
+                width: min(82vw, 300px);
+                padding: 24px 20px;
+                border-right: 1px solid #e5e7eb;
+                background: #ffffff;
+                box-shadow: 12px 0 32px rgba(17, 24, 39, 0.1);
+                transform: translateX(-105%);
+                visibility: hidden;
+                transition: transform 0.28s ease, visibility 0.28s ease;
+            }
+            .sidebar-menu.open { transform: translateX(0); visibility: visible; }
+            .menu-backdrop {
+                position: fixed;
+                inset: 65px 0 0;
+                z-index: 40;
+                display: block;
+                border: 0;
+                background: rgba(17, 24, 39, 0.28);
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.28s ease, visibility 0.28s ease;
+            }
+            .menu-backdrop.open { opacity: 1; visibility: visible; }
+            .nav-label { display: none; }
+            nav { display: flex; flex-direction: column; gap: 4px; }
+            .nav-link { margin: 0; }
+            .sidebar-about { margin-top: auto; }
+            main { padding: 40px 24px; }
         }
 
-        .modal-overlay.active .modal-content { transform: translateY(0); }
-
-        .modal-content h3 { font-size: 18px; margin-bottom: 10px; }
-        .modal-content p { font-size: 14px; color: #6b7280; margin-bottom: 20px; line-height: 1.5; }
-
-        .group-number {
-            display: block;
-            font-size: 24px;
-            font-weight: 700;
-            color: #3b82f6;
-            margin: 15px 0;
-            letter-spacing: 1px;
-            user-select: all;
+        @media (prefers-reduced-motion: reduce) {
+            .page.active { animation: none; }
         }
 
-        .close-btn {
-            background: #111827;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            transition: background 0.2s;
+        @font-face {
+            font-family: "Minecraft";
+            src: url("assets/fonts/seven.ttf") format("truetype");
+            font-display: swap;
         }
-        .close-btn:hover { background: #374151; }
-
     </style>
 </head>
 <body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a class="brand" href="#home" data-page="home">
+                    <span class="logo">S</span>
+                    <span>StrongTree的小站</span>
+                </a>
+                <button class="menu-toggle" type="button" aria-label="打开导航菜单" aria-expanded="false" aria-controls="sidebarMenu">
+                    <span class="menu-icon" aria-hidden="true"></span>
+                </button>
+            </div>
+            <div class="menu-backdrop" aria-hidden="true"></div>
+            <div class="sidebar-menu" id="sidebarMenu">
+                <nav aria-label="主导航">
+                    <p class="nav-label">导航</p>
+                    <a class="nav-link active" href="#home" data-page="home" aria-current="page">首页</a>
+                    <a class="nav-link" href="#blog" data-page="blog">博客</a>
+                    <a class="nav-link" href="#resources" data-page="resources">资源站</a>
+                    <a class="nav-link" href="#tools" data-page="tools">小工具</a>
+                </nav>
+                <a class="nav-link sidebar-about" href="#about" data-page="about">关于</a>
+            </div>
+        </aside>
 
-<div class="container">
-    <div class="logo">S</div>
-    <h1>StrongTree 的数字空间</h1>
-    <p class="description">
-        欢迎来到我的赛博自留地。<br>
-        这里存放着我的碎碎念、小资源以及游戏世界。
-    </p>
+        <main id="content" aria-live="polite">
 
-    <a href="/blog" class="btn btn-blog">进入博客</a>
-    <a href="http://strongtree.xn--0iv.gay:46542/" target="_blank" class="btn btn-sftp">获取资源</a >
-    <button onclick="openMCPopup()" class="btn btn-mc">加入 Minecraft 服务器</button>
-    
-    <a href="https://space.bilibili.com/你的UID" target="_blank" rel="noopener noreferrer" class="btn btn-bilibili">
-        B 站
-    </a>
+            <section class="page active" id="page-home" data-view="home">
+                <h1>StrongTree的小站</h1>
+                <p class="description">
+                    欢迎来到我的赛博自留地。<br>
+                    这里存放着我的碎碎念、小资源以及游戏世界。
+                </p>
+                <div class="video-frame">
+                    <iframe src="//player.bilibili.com/player.html?isOutside=true&aid=117553422666099&bvid=BV1KYxm6jEvb&cid=43303110489&p=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
+                 </div>
+                <section class="links" aria-label="快捷入口">
+                    <a href="#blog" data-page="blog" class="btn btn-blog">浏览博客</a>
+                    <a href="#resources" data-page="resources" class="btn btn-sftp">访问资源站</a>
+                </section>
+            </section>
 
-    <a href="https://zh.minecraft.wiki/w/User:你的用户名" target="_blank" rel="noopener noreferrer" class="btn btn-mcw">
-        MCW
-    </a>
+            <section class="page" id="page-blog" data-view="blog" hidden>
+                <h1>博客</h1>
+                <p class="page-copy">选择要访问的博客分类。</p>
+                <div class="blog-categories" aria-label="博客分类">
+                    <a href="blog-tech.html" class="blog-card">
+                        <span class="blog-card-image">
+                            <span class="blog-card-title">科技</span>
+                            <span class="blog-card-description">记录技术折腾、数码发现与实用经验。</span>
+                        </span>
+                    </a>
+                    <a href="blog-mc.html" class="blog-card blog-card-minecraft">
+                        <span class="blog-card-image">
+                            <span class="blog-card-title">Minecraft</span>
+                            <span class="blog-card-description">记录方块世界里的探索、建造与玩法。</span>
+                        </span>
+                    </a>
+                </div>
+            </section>
 
-    <!-- 底部免责声明 -->
-    <div class="footer-note">
-        免责声明：本站无 LGBTQ+ 及相关内容，纯属个人技术折腾与游戏分享。
+            <section class="page" id="page-resources" data-view="resources" hidden>
+                <h1>资源站</h1>
+                <p class="page-copy">个人整理与分享的小资源。</p>
+                <div class="links">
+                    <a href="http://strongtree.xn--0iv.gay:46542/" target="_blank" rel="noopener noreferrer" class="btn btn-sftp">打开资源站</a>
+                </div>
+            </section>
+
+            <section class="page" id="page-tools" data-view="tools" hidden>
+                <h1>小工具</h1>
+                <p class="page-copy">以下是一些小工具。</p>
+            </section>
+
+            <section class="page" id="page-about" data-view="about" hidden>
+                <h1>关于 </h1>
+                <span style="font-family: Minecraft;">by <span style="color:#30C0B4;">Strong</span><span style="color:#00B050;">Tree</span></span>
+                <p class="page-copy">这里是 StrongTree 的个人数字空间，分享技术折腾、游戏世界和个人动态。</p>
+                <div class="links">
+                    <a href="https://space.bilibili.com/3493127381846612" target="_blank" rel="noopener noreferrer" class="btn btn-bilibili">B 站主页</a>
+                    <a href="https://zh.minecraft.wiki/w/User:StrongTree" target="_blank" rel="noopener noreferrer" class="btn btn-mcw">Minecraft Wiki 用户页</a>
+                </div>
+                <footer class="footer-note">
+                    免责声明：本站无 LGBTQ+ 及相关内容，纯属个人技术折腾与游戏分享。
+                </footer>
+            </section>
+        </main>
     </div>
 
-</div>
+    <script>
+        function showPage(pageName) {
+            const pages = document.querySelectorAll('[data-view]');
+            const links = document.querySelectorAll('[data-page]');
+            const selectedPage = document.querySelector(`[data-view="${pageName}"]`) || document.querySelector('[data-view="home"]');
 
-<!-- 弹窗结构 -->
-<div class="modal-overlay" id="mcModal">
-    <div class="modal-content">
-        <h3>加入 Minecraft 服务器</h3>
-        <p>为了保障服务器环境，需进群申请白名单，获取连接地址。</p>
-        <span class="group-number">QQ群: 123456789</span>
-        <button class="close-btn" onclick="closeMCPopup()">我知道了</button>
-    </div>
-</div>
+            pages.forEach(function (page) {
+                const isSelected = page === selectedPage;
+                page.hidden = !isSelected;
+                page.classList.toggle('active', isSelected);
+            });
 
-<script>
-    function openMCPopup() { document.getElementById('mcModal').classList.add('active'); }
-    function closeMCPopup() { document.getElementById('mcModal').classList.remove('active'); }
-    document.getElementById('mcModal').addEventListener('click', function(e) {
-        if (e.target === this) { closeMCPopup(); }
-    });
-</script>
+            links.forEach(function (link) {
+                const isSelected = link.dataset.page === selectedPage.dataset.view;
+                link.classList.toggle('active', isSelected);
+                if (isSelected) {
+                    link.setAttribute('aria-current', 'page');
+                } else {
+                    link.removeAttribute('aria-current');
+                }
+            });
+        }
 
+        function syncPageFromHash() {
+            showPage(window.location.hash.slice(1) || 'home');
+        }
+
+        const menuToggle = document.querySelector('.menu-toggle');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const menuBackdrop = document.querySelector('.menu-backdrop');
+
+        function closeSidebarMenu() {
+            sidebarMenu.classList.remove('open');
+            menuBackdrop.classList.remove('open');
+            menuToggle.setAttribute('aria-expanded', 'false');
+            menuToggle.setAttribute('aria-label', '打开导航菜单');
+        }
+
+        menuToggle.addEventListener('click', function () {
+            const isOpen = menuToggle.getAttribute('aria-expanded') === 'true';
+            menuToggle.setAttribute('aria-expanded', String(!isOpen));
+            menuToggle.setAttribute('aria-label', isOpen ? '打开导航菜单' : '关闭导航菜单');
+            sidebarMenu.classList.toggle('open', !isOpen);
+            menuBackdrop.classList.toggle('open', !isOpen);
+        });
+
+        menuBackdrop.addEventListener('click', closeSidebarMenu);
+
+        document.addEventListener('click', function (event) {
+            const pageLink = event.target.closest('[data-page]');
+            if (pageLink) {
+                if (pageLink.getAttribute('href') === window.location.hash) {
+                    showPage(pageLink.dataset.page);
+                }
+                closeSidebarMenu();
+            }
+        });
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') { closeSidebarMenu(); }
+        });
+        window.addEventListener('hashchange', syncPageFromHash);
+        syncPageFromHash();
+    </script>
 </body>
 </html>
